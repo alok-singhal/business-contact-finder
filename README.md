@@ -1,6 +1,6 @@
 # Business Contact Finder
 
-Extracts contact details (email, phone, website, Instagram, Facebook) for businesses using Google Custom Search API.
+Discovers businesses by category in a given city and extracts their contact details (email, phone, website, Instagram, Facebook).
 
 ## Setup
 
@@ -17,32 +17,26 @@ Extracts contact details (email, phone, website, Instagram, Facebook) for busine
 3. Copy the **Search Engine ID**
 
 ### 3. Prepare Your CSV
-Create `businesses.csv` with columns:
+Edit `businesses.csv` with categories and locations:
 ```
 Business Name,City,Country
-Costa Coffee,London,UK
+Hair salon,Newcastle upon Tyne,United Kingdom
+Nail salon,Newcastle upon Tyne,United Kingdom
 ```
 
 ### 4. Install & Run
 ```bash
-pip install -r requirements.txt
+pip install requests beautifulsoup4
 python finder.py
 ```
 
-It will prompt for your API Key and Search Engine ID, then output `results.xlsx`.
-
-## Environment Variables (optional)
-Instead of entering credentials each time:
-```bash
-export GOOGLE_API_KEY=your_key_here
-export GOOGLE_CX=your_search_engine_id
-```
+It will prompt for your API Key, Search Engine ID, and pages per category, then output `results.csv`.
 
 ## Limits
-- Google Custom Search API: **100 free queries/day** (3,000/month)
-- Each business uses 1 API call
-- Rate limited to 1 request/second to be safe
+- Google Custom Search API: **100 free queries/day**
+- 1 page = 10 results = 1 API call
+- 3 categories x 3 pages = 9 API calls
 
 ## Output
-`results.xlsx` with columns:
-| Business Name | City | Country | Website | Email | Phone | Instagram | Facebook |
+`results.csv` with columns:
+Category, Business Name, City, Country, Website, Email, Phone, Instagram, Facebook

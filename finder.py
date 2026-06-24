@@ -4,7 +4,6 @@ import time
 import os
 import requests
 from bs4 import BeautifulSoup
-from openpyxl import Workbook
 
 API_KEY = os.environ.get("GOOGLE_API_KEY", "")
 CX = os.environ.get("GOOGLE_CX", "")
@@ -116,7 +115,7 @@ def main():
         CX = input("Enter your Search Engine ID (cx): ").strip()
 
     input_file = "businesses.csv"
-    output_file = "results.xlsx"
+    output_file = "results.csv"
 
     if not os.path.exists(input_file):
         print(f"Error: {input_file} not found. Create it with columns: Business Name, City, Country")
@@ -125,10 +124,9 @@ def main():
     # Read how many pages to search per category
     pages = int(input("How many pages per category? (1 page = 10 results, uses 1 API call): ") or "3")
 
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Results"
-    ws.append(["Category", "Business Name", "City", "Country", "Website", "Email", "Phone", "Instagram", "Facebook"])
+    out = open(output_file, 'w', newline='', encoding='utf-8')
+    writer = csv.writer(out)
+    writer.writerow(["Category", "Business Name", "City", "Country", "Website", "Email", "Phone", "Instagram", "Facebook"])
 
     with open(input_file, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
@@ -147,7 +145,7 @@ def main():
             # Get contact details for each
             for biz in businesses:
                 details = get_contact_details(biz)
-                ws.append([
+                writer.writerow([
                     category,
                     details["name"],
                     city,
@@ -160,7 +158,7 @@ def main():
                 ])
                 time.sleep(0.5)
 
-    wb.save(output_file)
+    out.close()
     print(f"\nDone! Results saved to {output_file}")
 
 if __name__ == "__main__":
