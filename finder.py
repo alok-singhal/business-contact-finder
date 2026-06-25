@@ -2,6 +2,7 @@ import re
 import time
 import os
 import csv
+from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
@@ -139,13 +140,15 @@ def main():
     else:
         search_method = "duckduckgo"
 
-    output_file = "results.csv"
-    out = open(output_file, 'w', newline='', encoding='utf-8')
-    writer = csv.writer(out)
-    writer.writerow(["Niche", "Business Name", "City", "Country", "Website", "Email", "Phone", "Instagram", "Facebook"])
+    date_stamp = datetime.now().strftime("%d%m")
 
     for niche in niches:
         for city in cities:
+            output_file = f"{niche}_{city}_{date_stamp}.csv".replace(" ", "_")
+            out = open(output_file, 'w', newline='', encoding='utf-8')
+            writer = csv.writer(out)
+            writer.writerow(["Niche", "Business Name", "City", "Country", "Website", "Email", "Phone", "Instagram", "Facebook"])
+
             businesses = discover_businesses(niche, city, country, search_method, api_key, cx)
             print(f"  Found {len(businesses)} businesses")
             for biz in businesses:
@@ -153,8 +156,10 @@ def main():
                 writer.writerow([niche, details["name"], city, country, details["website"], details["email"], details["phone"], details["instagram"], details["facebook"]])
                 time.sleep(1)
 
-    out.close()
-    print(f"\nDone! Results saved to {output_file}")
+            out.close()
+            print(f"  Saved: {output_file}")
+
+    print("\nDone!")
 
 
 if __name__ == "__main__":
